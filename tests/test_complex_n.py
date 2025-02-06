@@ -1,55 +1,7 @@
 import unittest
 import math
-from src.complex_n  import Rational, Complex
-
-
-class TestRational(unittest.TestCase):
-    def test_initialization(self):
-        # Проверка корректной инициализации
-        r = Rational(2, 4)
-        self.assertEqual(r.numerator, 1)
-        self.assertEqual(r.denominator, 2)
-
-        # Проверка исключения при нулевом знаменателе
-        with self.assertRaises(ValueError):
-            Rational(1, 0)
-
-    def test_simplify(self):
-        # Проверка упрощения дроби
-        r = Rational(4, 6)
-        self.assertEqual(r.numerator, 2)
-        self.assertEqual(r.denominator, 3)
-
-        # Проверка обработки отрицательного знаменателя
-        r = Rational(3, -4)
-        self.assertEqual(r.numerator, -3)
-        self.assertEqual(r.denominator, 4)
-
-    def test_properties(self):
-        # Проверка сеттеров и упрощения
-        r = Rational(1, 2)
-        r.numerator = 6
-        self.assertEqual(r.numerator, 3)
-        self.assertEqual(r.denominator, 1)
-
-        r.denominator = 4
-        self.assertEqual(r.numerator, 3)
-        self.assertEqual(r.denominator, 4)
-
-        # Проверка исключения при установке нулевого знаменателя
-        with self.assertRaises(ValueError):
-            r.denominator = 0
-
-    def test_string_representations(self):
-        # Проверка строкового представления
-        r1 = Rational(3, 1)
-        self.assertEqual(str(r1), "3")
-        self.assertEqual(repr(r1), "Rational(3, 1)")
-
-        r2 = Rational(5, 2)
-        self.assertEqual(str(r2), "5/2")
-        self.assertEqual(repr(r2), "Rational(5, 2)")
-
+from src.complex_n  import  Complex
+from src.rational_n import Rational
 
 class TestComplex(unittest.TestCase):
     def test_initialization(self):
@@ -172,6 +124,118 @@ class TestComplex(unittest.TestCase):
 
         c3 = Complex(2, 0)
         self.assertEqual(str(c3), "2")
+
+    def test_large_real_part(self):
+        # Проверка инициализации с очень большой действительной частью
+        a = Complex(10**18, 0)
+        self.assertEqual(a.real, Rational(10**18))
+        self.assertEqual(a.imagine, Rational(0))
+
+    def test_large_imaginary_part(self):
+        # Проверка инициализации с очень большой мнимой частью
+        a = Complex(0, 10**18)
+        self.assertEqual(a.real, Rational(0))
+        self.assertEqual(a.imagine, Rational(10**18))
+
+    def test_large_addition(self):
+        # Сложение комплексных чисел с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        result = a + b
+        self.assertEqual(result.real, Rational(2 * 10**18))
+        self.assertEqual(result.imagine, Rational(2 * 10**18))
+
+    def test_large_subtraction(self):
+        # Вычитание комплексных чисел с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        result = a - b
+        self.assertEqual(result.real, Rational(0))
+        self.assertEqual(result.imagine, Rational(0))
+
+    def test_large_multiplication(self):
+        # Умножение комплексных чисел с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        result = a * b
+        self.assertEqual(result.real, Rational(0))
+        self.assertEqual(result.imagine, Rational(2 * 10**36))
+
+    def test_large_division(self):
+        # Деление комплексных чисел с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        result = a / b
+        self.assertAlmostEqual(float(result.real), 1.0)
+        self.assertAlmostEqual(float(result.imagine), 0.0)
+
+    def test_large_abs(self):
+        # Проверка модуля комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        self.assertAlmostEqual(abs(a), (2 * 10**36) ** 0.5)
+
+    def test_large_pow(self):
+        # Возведение комплексного числа с очень большими частями в степень
+        a = Complex(10**18, 10**18)
+        result = a ** 2
+        self.assertEqual(result.real, Rational(0))
+        self.assertEqual(result.imagine, Rational(2 * 10**36))
+
+    def test_large_eq(self):
+        # Проверка равенства комплексных чисел с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        self.assertTrue(a == b)
+
+    def test_large_ne(self):
+        # Проверка неравенства комплексных чисел с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18 + 1)
+        self.assertTrue(a != b)
+
+    def test_large_neg(self):
+        # Проверка унарного минуса для комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        result = -a
+        self.assertEqual(result.real, Rational(-10**18))
+        self.assertEqual(result.imagine, Rational(-10**18))
+
+    def test_large_arg(self):
+        # Проверка аргумента комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        self.assertAlmostEqual(a.arg(), math.pi / 4)
+
+    def test_large_iadd(self):
+        # Проверка сложения с присваиванием для комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        a += b
+        self.assertEqual(a.real, Rational(2 * 10**18))
+        self.assertEqual(a.imagine, Rational(2 * 10**18))
+
+    def test_large_isub(self):
+        # Проверка вычитания с присваиванием для комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        a -= b
+        self.assertEqual(a.real, Rational(0))
+        self.assertEqual(a.imagine, Rational(0))
+
+    def test_large_imul(self):
+        # Проверка умножения с присваиванием для комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        a *= b
+        self.assertEqual(a.real, Rational(0))
+        self.assertEqual(a.imagine, Rational(2 * 10**36))
+
+    def test_large_itruediv(self):
+        # Проверка деления с присваиванием для комплексного числа с очень большими частями
+        a = Complex(10**18, 10**18)
+        b = Complex(10**18, 10**18)
+        a /= b
+        self.assertAlmostEqual(float(a.real), 1.0)
+        self.assertAlmostEqual(float(a.imagine), 0.0)
 
 
 if __name__ == '__main__':
