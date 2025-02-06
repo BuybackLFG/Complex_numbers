@@ -1,6 +1,5 @@
 import math
 from fractions import Fraction
-from src.rational_n import Rational
 class Complex:
     """
     Класс Complex представляет комплексное число в виде действительной и мнимой частей.
